@@ -1,64 +1,64 @@
+import React, { useState } from 'react';
+import './App.css';
 
-import React from 'react';
-import './App.css'
+
+// Create a checklist component where we would have an input and a submit button. 
+// Whenever clicked on the submit button, the text of the input field would be added as a task on the list. 
+// Below the input and the submit, there would be a list of items with a check mark that when clicked would strike through the task and mark it as completed.
+ 
+// Step 1:
+// Create an input field and submit button. Add validations for blank field.
+ 
+// Step 2:
+// Create a list of tasks entered by users and update it dynamically when users submit a new task.
+// Display the list of tasks under the input and submit button.
+ 
+// Step 3:
+// Allow users to mark the task as done by strike through when clicked on the task.
 
 function App() {
-  const INPUT = [1,8,6,2,5,4,8,3,7];
+  const [todos, setTodos] = useState<{ id: string, completed: boolean, name: string }[]>([]);
+  const [input, setInput] = useState('');
+  const count = todos.length;
 
-  function maxArea(height: number[]): number {
-    let max = 0;
-
-      // Brute Force Approach, O(n^2) time complexity, O(1) space complexity
-      // for (let leftPointer = 0; leftPointer < height.length; leftPointer++) {
-      //     for(let rightPointer = leftPointer + 1; rightPointer < height.length; rightPointer++) {
-      //         const leftVal = height[leftPointer];
-      //         const rightVal = height[rightPointer];
-      //         const width = rightPointer - leftPointer;
-      //         const bottleneck = Math.min(leftVal, rightVal);
-      //         const area = width * bottleneck;
-
-      //         max = Math.max(max, area);
-      //         rightPointer = rightPointer + 1;
-      //     }
-      // }
-
-      // Optimal Approach, O(n) time complexity, O(1) space complexity
-      let leftPointer = 0;
-      let rightPointer = height.length - 1;
-
-      while (leftPointer < rightPointer) {
-        const leftVal = height[leftPointer];
-        const rightVal = height[rightPointer];
-        const width = rightPointer - leftPointer;
-        const bottleneck = Math.min(leftVal, rightVal);
-        const area = width * bottleneck;
-
-        console.log('[leftVal]: ', leftVal);
-        console.log('[rightVal]: ', rightVal);
-        console.log('[width]: ', width);
-        console.log('[bottleneck]: ', bottleneck);
-        console.log('[area]: ', area);
-
-        max = Math.max(max, area);
-        
-        if (leftVal < rightVal) {
-          leftPointer = leftPointer + 1;
-        } else {
-          rightPointer = rightPointer - 1;
-        }
-      }
-
-      return max;
+  const addTodo = () => {
+    if (input.trim() === '') alert('Input must be populated');
+    setTodos([
+      ...todos,
+      { id: `${count + 1}`, completed: false, name: input },
+    ]);
   };
 
-  console.log('[INPUT]: ', INPUT);
-  console.log('[OUTPUT]: ', maxArea(INPUT));
+  const typeInput = (e) => {
+    setInput(e.target.value);
+  }
+
+  const toggleTodo = (id: string) => {
+    const newTodos = todos.map(todo => {
+      if (todo.id === id) {
+        return { ...todo, completed: !todo.completed };
+      } else {
+        return todo;
+      }
+    });
+    setInput('');
+    setTodos(newTodos);
+  }
 
   return (
-      <div className="app">
-        {maxArea(INPUT)}
-      </div>
-  )
+    <div>
+      <input type="text" placeholder="Add todo..." value={input} onChange={typeInput} />
+      <button onClick={addTodo}>Submit</button>
+      <ul>
+        {todos.map((todo, idx) => (
+          <>
+            <span onClick={() => { toggleTodo(todo.id) }}>Check</span>{" "}
+            <li key={idx} style={{ textDecoration: todo.completed ? 'underline' : ''}}>{todo.name}</li>
+          </>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;
